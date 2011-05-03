@@ -9,19 +9,22 @@ Use `require(libUrl)` to load modules
 and `scope(executionContext, deps...)` to handle
 asynchronous dependencies and sandboxing.
 
-load external modules in the namespaces you want
+load external modules in your custom namespaces
+
     var lib1 = require('http://path/to/your/lib1');
     var lib2 = require('http://path/to/your/lib2');
     var lib3 = require('http://path/to/your/lib3');
 
-Wait that lib1 & lib3 are loaded (libs are passed as args so to they stick in the local scope)
+Wait that `lib1` and `lib3` are loaded (libs are passed as args so to they can be in the local scope)
+
     scope(function(lib1, lib3) {
       lib1.method();
       lib3.method();
       ....
     }, lib1, lib3);
 
-Wait that all libs are loaded
+Wait that all libs are loaded by passing arg `true`
+
     scope(function(lib1, lib2, lib3) {
       lib1.method();
       lib3.method();
@@ -29,7 +32,8 @@ Wait that all libs are loaded
       ....
     }, true);
 
-Wait that lib1 & lib3 are loaded and DOM is ready
+Wait that `lib1` and `lib3` are loaded and DOM is ready
+
     scope.ready(function(lib1, lib3) {
       lib1.method();
       lib3.method();
@@ -37,6 +41,7 @@ Wait that lib1 & lib3 are loaded and DOM is ready
     }, lib1, lib3);
 
 Wait that all libs are loaded and DOM is ready
+
     scope.ready(function(lib1, lib2, lib3) {
       lib1.method();
       lib3.method();
@@ -46,7 +51,7 @@ Wait that all libs are loaded and DOM is ready
 
 ### Publish a client-side CommonJS module
 
-In the external library, sandbox your code and use `exports` for anything you want to make public:
+In the external library, sandbox your code in a function and use `exports` for anything you want to make public:
 
     (function() {
 
