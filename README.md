@@ -7,7 +7,7 @@ See a little [demo] (http://myjs.fr/my-common/example/example.html).
 
 Use `require(libUrl)` to load modules
 and `scope(executionContext, deps...)` to handle
-asynchronous dependencies and sandboxing.
+asynchronous dependencies (and sandbox your code).
 
 load external modules in your custom namespaces
 
@@ -15,13 +15,14 @@ load external modules in your custom namespaces
     var lib2 = require('http://path/to/your/lib2');
     var lib3 = require('http://path/to/your/lib3');
 
-Wait that `lib1` and `lib3` are loaded (libs are passed as args so to they can be in the local scope)
+Wait that `lib1` and `lib3` are loaded (libs are passed as args so that they can be in the local scope)
 
     scope(function(lib1, lib3) {
       lib1.method();
       lib3.method();
       ....
     }, lib1, lib3);
+
 
 Wait that all libs are loaded by passing arg `true`
 
@@ -32,6 +33,7 @@ Wait that all libs are loaded by passing arg `true`
       ....
     }, true);
 
+
 Wait that `lib1` and `lib3` are loaded and DOM is ready
 
     scope.ready(function(lib1, lib3) {
@@ -39,6 +41,7 @@ Wait that `lib1` and `lib3` are loaded and DOM is ready
       lib3.method();
       ....
     }, lib1, lib3);
+
 
 Wait that all libs are loaded and DOM is ready
 
@@ -49,9 +52,11 @@ Wait that all libs are loaded and DOM is ready
     }, true);
 
 
+
 ### Publish a client-side CommonJS module
 
-In the external library, sandbox your code in a function and use `exports` for anything you want to make public:
+To write a library that others can load as a module with `require` and a custom namespace,
+export what you want to make public with the commonJS `exports` object:
 
     (function() {
 

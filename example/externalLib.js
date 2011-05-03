@@ -11,8 +11,8 @@
 
   exports.Person = Person;
   
-  exports.doSomethingCrazy = function() {
-    alert('I\'m doing something crazy!')
+  exports.externalMethod = function() {
+    alert('This is an external method! See the source of this page!');
   }
 
 })();
