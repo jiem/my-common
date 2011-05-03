@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="http://myjs.fr/my-common/my.common.min.js"></script>
+
+<!----------------------------------------------------------------------------->
+<script>
+
+var lib = require('http://myjs.fr/my-common/example/externalLib.js');
+
+scope(function(lib) {  
+
+  new lib.Person('Jie', 'Paris').sayHello();
+
+}, lib);
+
+</script>    
+<!----------------------------------------------------------------------------->
+
+</head>
+
+<body></body>
+
+</html>
