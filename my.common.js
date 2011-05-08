@@ -1,33 +1,28 @@
 //Copyright 2011 Jie Meng-Gérard MIT-LICENSE
 
-(function(document, window) {
+(function(document, window) {  
 
   //============================================================================
   // @param libUrl:string
   window.require = function(libUrl) {
     var lib = {};
-    var pendingScopes = [];
-    var libParams = {loaded: false, pendingScopes: pendingScopes};
+    var scopes = [];
+    var libParams = {loaded: false, scopes: scopes};
     var script = document.createElement('script');
-    var loadListener = function() {
+    addEventListener(script, 'load', function() {
       var scope;
       if (exports) {
         for (var e in exports)
           lib[e] = exports[e];
         exports = {};
       }
-      for (var i = 0, len = pendingScopes.length; i < len; i++) {
-        scope = pendingScopes[i];
-        scope.waitLoad--;
-        if (scope.waitLoad === 0)
+      for (var i = 0; scope = scopes[i]; i++) {        
+        scope.wait--;
+        if (scope.wait === 0)
           scope.executionContext.apply(null, scope.args);
       }
       HEAD.removeChild(script);      
-    }    
-    if (script.addEventListener)
-      script.addEventListener('load', loadListener, false);
-    else
-      script.attachEvent('onload', loadListener);
+    });
     script.src = libUrl;
     LIBS.push(lib);
     LIBS_PARAMS.push(libParams);
@@ -46,7 +41,7 @@
       executionContext.apply(null, LIBS);
       return;
     }
-    var scope = {executionContext: executionContext, waitLoad: 0};
+    var scope = {executionContext: executionContext, wait: 0};
     var len = LIBS.length;
     var i, j, lib, libParams;
     if (deps === true) {
@@ -54,8 +49,8 @@
       for (i = 0; i < len; i++) {
         libParams = LIBS_PARAMS[i];
         if (!libParams.loaded) {
-          libParams.pendingScopes.push(scope);
-          scope.waitLoad++;
+          libParams.scopes.push(scope);
+          scope.wait++;
         }
       }
     } else {
@@ -66,8 +61,8 @@
           if (lib === LIBS[j]) {
             libParams = LIBS_PARAMS[j];
             if (!libParams.loaded) {
-              libParams.pendingScopes.push(scope);
-              scope.waitLoad++;
+              libParams.scopes.push(scope);
+              scope.wait++;
             }
           }
         }
@@ -79,23 +74,31 @@
   // @params executionContext:function, deps:libs...|boolean
   scope.ready = function() {
     var args = arguments;
-    var readyListenerExecuted = false;
+    var readyListenerExecuted = false;    
     var readyListener = function() {
       if (!readyListenerExecuted) {
         scope.apply(null, args);
         readyListenerExecuted = true;
       }
     }
-    if (document.addEventListener) {
-      document.addEventListener('DOMContentLoaded', readyListener, false);
-      document.addEventListener('load', readyListener, false);
+    if (supportsAddEventListener) {
+      addEventListener(document, 'DOMContentLoaded', readyListener);
     } else {
-      document.attachEvent('onreadystatechange', function() {
+      addEventListener('readystatechange', function() {
         if (document.readyState === 'complete')
           readyListener();
       });
-      document.attachEvent('onload', readyListener);
     }
+    addEventListener(document, 'load', readyListener);
+  }
+
+  //============================================================================    
+  var supportsAddEventListener = document.addEventListener;
+  var addEventListener = function(elt, event, listener) {
+    if (supportsAddEventListener)
+      elt.addEventListener(event, listener, false);
+    else
+      elt.attachEvent('on' + event, listener);
   }
 
   //============================================================================    
