@@ -62,7 +62,7 @@ Note: the syntax of `scope` is similar to
 except that `scope` also handles dependencies.
 Libs are passed as args so that they can be in the local scope (faster access).
 
-## Publish a CommonJS-like script/module
+## Publish a CommonJS-like script/module with `exports`
 
 To write a library that others can load as a module in their custom variable with `require`,  
 just write `exports.foo = foo` in your script, `foo` being whatever your want to make public:
@@ -109,7 +109,7 @@ just add a test to see if the `exports` object exists:
       var Class2 = function() {...}
       ....
 
-      //test the existence of exports
+      //Test the existence of exports for compatibility
       if (exports) {
         exports.method1 = method1;
         exports.Class1 = Class1;
